@@ -1,5 +1,5 @@
 class Kele
-  require HTTParty
+  include HTTParty
 
   def initialize(username, password)
     @base_url = 'https://www.bloc.io/api/v1'
