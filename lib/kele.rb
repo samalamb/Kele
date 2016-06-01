@@ -45,12 +45,28 @@ class Kele
   end
 
   def create_submission(checkpoint_id, assignment_branch, assignment_commit_link, comment)
+    submission_variables(id, checkpoint_id, enrollment_id, assignment_branch, assignment_commit_link, comment)
+
     response = self.class.post(base_api_endpoint('checkpoint_submissions'), body: {
-                                                                              "assignment_branch": assignment_branch,
-                                                                              "assignment_commit_link": assignment_commit_link,
-                                                                              "checkpoint_id": checkpoint_id,
-                                                                              "comment": comment,
-                                                                              "enrollment_id": enrollment_id
+                                                                              "assignment_branch": @assignment_branch,
+                                                                              "assignment_commit_link": @assignment_commit_link,
+                                                                              "checkpoint_id": @checkpoint_id,
+                                                                              "comment": @comment,
+                                                                              "enrollment_id": @enrollment_id
+                                                                            }, headers: {"authorization" => @auth_token})
+    puts response
+  end
+
+  def update_submission(id, checkpoint_id, assignment_branch, assignment_commit_link, comment)
+    submission_variables(id, checkpoint_id, assignment_branch, assignment_commit_link, comment)
+
+    response = self.class.put(base_api_endpoint('checkpoint_submissions'), body: {
+                                                                              "id": @id,
+                                                                              "assignment_branch": @assignment_branch,
+                                                                              "assignment_commit_link": @assignment_commit_link,
+                                                                              "checkpoint_id": @checkpoint_id,
+                                                                              "comment": @comment,
+                                                                              "enrollment_id": @enrollment_id
                                                                             }, headers: {"authorization" => @auth_token})
     puts response
   end
@@ -58,5 +74,14 @@ class Kele
 private
   def base_api_endpoint(end_point)
     "https://www.bloc.io/api/v1/#{end_point}"
+  end
+
+  def submission_variables(id, checkpoint_id, assignment_branch, assignment_commit_link, comment)
+    @id = id
+    @checkpoint_id = checkpoint_id
+    @enrollment_id = get_me["current_enrollment"]["id"]
+    @assignment_branch = assignment_branch
+    @assignment_commit_link = assignment_commit_link
+    @comment = comment
   end
 end
